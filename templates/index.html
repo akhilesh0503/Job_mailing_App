@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>JobMailer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:       #0a0a0b;
+  --s1:       #111113;
+  --s2:       #18181b;
+  --s3:       #222227;
+  --border:   #2a2a2f;
+  --border2:  #3a3a40;
+  --text:     #ececee;
+  --muted:    #6b6b72;
+  --muted2:   #4a4a52;
+  --accent:   #5b6af5;
+  --accent-h: #4a59e8;
+  --green:    #22c55e;
+  --green-bg: #052e16;
+  --red:      #ef4444;
+  --red-bg:   #450a0a;
+  --yellow:   #f59e0b;
+  --yellow-bg:#451a03;
+  --purple:   #a78bfa;
+  --purple-bg:#2e1065;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --radius: 8px;
+  --sidebar: 200px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;display:flex;min-height:100vh}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:var(--sidebar);min-height:100vh;background:var(--s1);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:10;
+}
+.logo{
+  padding:18px 16px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+}
+.logo-mark{
+  width:22px;height:22px;background:var(--accent);border-radius:5px;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.logo-text{font-size:12px;font-weight:600;color:var(--text);letter-spacing:0.3px}
+
+/* User toggle */
+.user-toggle{padding:12px 10px;border-bottom:1px solid var(--border)}
+.toggle-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.toggle-row{display:flex;background:var(--s3);border-radius:6px;padding:2px;gap:2px}
+.toggle-btn{
+  flex:1;padding:5px 4px;border:none;border-radius:4px;font-size:11px;font-weight:500;
+  cursor:pointer;background:transparent;color:var(--muted);transition:all 0.15s;font-family:var(--sans);
+}
+.toggle-btn.active{background:var(--accent);color:#fff}
+
+/* Nav */
+.nav{flex:1;padding:8px 0}
+.nav-item{
+  display:flex;align-items:center;gap:9px;padding:8px 14px;
+  font-size:12.5px;color:var(--muted);cursor:pointer;transition:all 0.12s;
+  border-left:2px solid transparent;margin:1px 0;
+}
+.nav-item:hover{color:var(--text);background:var(--s2)}
+.nav-item.active{color:var(--text);border-left-color:var(--accent);background:var(--s2)}
+.nav-icon{font-size:14px;width:16px;text-align:center}
+.nav-label{flex:1}
+
+/* Main */
+.main{margin-left:var(--sidebar);flex:1;padding:32px 36px;max-width:calc(100vw - var(--sidebar));min-height:100vh}
+.page{display:none}
+.page.active{display:block}
+
+/* Page header */
+.ph{margin-bottom:28px}
+.ph h1{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-0.3px}
+.ph p{font-size:12px;color:var(--muted);margin-top:3px}
+
+/* Card */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.card-hd{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted2);margin-bottom:14px}
+
+/* Form */
+label{font-size:11px;color:var(--muted);display:block;margin-bottom:5px;font-weight:500}
+input,select,textarea{
+  width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);
+  border-radius:6px;padding:8px 11px;font-size:12.5px;font-family:var(--sans);
+  outline:none;transition:border-color 0.12s;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+input::placeholder{color:var(--muted2)}
+textarea{resize:vertical;min-height:160px;font-family:var(--mono);font-size:12px;line-height:1.75}
+select option{background:var(--s2)}
+.fg{margin-bottom:14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* Search dropdown */
+.sd{position:relative}
+.dd-list{
+  position:absolute;top:calc(100% + 3px);left:0;right:0;
+  background:var(--s2);border:1px solid var(--border);border-radius:6px;
+  max-height:180px;overflow-y:auto;z-index:50;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.4);
+}
+.dd-list.open{display:block}
+.dd-item{
+  padding:8px 11px;font-size:12.5px;cursor:pointer;transition:background 0.1s;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.dd-item:hover{background:var(--s3)}
+.dd-count{font-size:10px;color:var(--muted);font-family:var(--mono)}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;padding:8px 16px;
+  border-radius:6px;font-size:12.5px;font-weight:500;cursor:pointer;
+  border:none;transition:all 0.12s;font-family:var(--sans);white-space:nowrap;
+}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-h)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{border-color:var(--border2);background:var(--s2)}
+.btn-green{background:var(--green-bg);color:var(--green);border:1px solid #14532d}
+.btn-green:hover{background:#052e16cc}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid #7f1d1d}
+.btn-danger:hover{opacity:0.85}
+.btn-sm{padding:5px 11px;font-size:11.5px}
+.btn:disabled{opacity:0.35;cursor:not-allowed}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:500}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+.badge-blue{background:#1e1b4b;color:#818cf8}
+
+/* Upload zone */
+.upload-zone{
+  border:1.5px dashed var(--border);border-radius:6px;padding:16px;
+  text-align:center;cursor:pointer;transition:border-color 0.12s;
+}
+.upload-zone:hover{border-color:var(--accent)}
+.upload-zone.has-file{border-color:var(--green)}
+.upload-zone .uz-icon{font-size:18px;display:block;margin-bottom:5px}
+.upload-zone .uz-text{font-size:12px;color:var(--muted)}
+.upload-zone .uz-file{font-size:11px;color:var(--green);font-family:var(--mono);margin-top:3px}
+
+/* Preview cards */
+.preview-cards{display:flex;flex-direction:column;gap:14px;margin-top:16px}
+.pcard{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color 0.15s}
+.pcard.sent{border-color:var(--green)}
+.pcard-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;background:var(--s2);border-bottom:1px solid var(--border);
+}
+.pcard-email{font-family:var(--mono);font-size:11.5px;color:var(--purple)}
+.pcard-badges{display:flex;gap:6px;align-items:center}
+.pcard-body{padding:16px}
+.pcard-meta{font-size:11.5px;color:var(--muted);margin-bottom:12px}
+.pcard-meta strong{color:var(--text)}
+.pcard-actions{display:flex;gap:8px;align-items:center;margin-top:12px}
+.sent-indicator{display:none;font-size:11.5px;color:var(--green)}
+.pcard.sent .sent-indicator{display:inline-flex;align-items:center;gap:4px}
+.pcard.sent .send-btn{display:none}
+
+/* Sheet table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);font-weight:600}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text);font-size:12px}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2)}
+.tbl .flagged td{opacity:0.38}
+
+/* Config */
+.cfg-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.cfg-item:last-child{border-bottom:none}
+.cfg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.cfg-dot.ok{background:var(--green)}
+.cfg-dot.err{background:var(--red)}
+
+/* Templates page */
+.tpl-layout{display:grid;grid-template-columns:220px 1fr;gap:16px;height:calc(100vh - 140px)}
+.tpl-list{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);overflow-y:auto}
+.tpl-list-hd{padding:12px 14px;border-bottom:1px solid var(--border);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted2);display:flex;justify-content:space-between;align-items:center}
+.tpl-group-label{padding:8px 14px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);font-weight:600}
+.tpl-item{
+  padding:9px 14px;cursor:pointer;transition:background 0.1s;
+  border-left:2px solid transparent;font-size:12.5px;color:var(--muted);
+}
+.tpl-item:hover{background:var(--s2);color:var(--text)}
+.tpl-item.active{background:var(--s2);color:var(--text);border-left-color:var(--accent)}
+.tpl-editor{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:14px}
+.tpl-editor textarea{flex:1;min-height:320px}
+.tpl-editor-actions{display:flex;gap:8px;align-items:center}
+.tpl-placeholders{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.tpl-placeholders span{color:var(--purple);margin-right:8px}
+
+/* Divider */
+.divider{height:1px;background:var(--border);margin:18px 0}
+
+/* Send-all bar */
+.send-all-bar{display:flex;gap:10px;align-items:center;margin-top:18px;padding:14px 16px;background:var(--s2);border:1px solid var(--border);border-radius:var(--radius)}
+
+/* Spinner */
+.spin{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:sp 0.55s linear infinite;display:inline-block;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* Toast */
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:7px}
+.toast{
+  background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:10px 14px;font-size:12.5px;min-width:240px;
+  display:flex;align-items:center;gap:9px;animation:tin 0.18s ease;
+}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid var(--red)}
+@keyframes tin{from{transform:translateX(14px);opacity:0}to{transform:none;opacity:1}}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:24px;width:420px;max-width:90vw}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:16px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">J</div>
+    <span class="logo-text">JobMailer</span>
+  </div>
+
+  <div class="user-toggle">
+    <div class="toggle-label">Active User</div>
+    <div class="toggle-row">
+      <button class="toggle-btn active" id="u1-btn" onclick="switchUser('1')">User 1</button>
+      <button class="toggle-btn" id="u2-btn" onclick="switchUser('2')">User 2</button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <div class="nav-item active" onclick="showPage('compose')" id="nav-compose">
+      <span class="nav-icon">✦</span><span class="nav-label">Compose</span>
+    </div>
+    <div class="nav-item" onclick="showPage('sheet')" id="nav-sheet">
+      <span class="nav-icon">⊞</span><span class="nav-label">Sheet Data</span>
+    </div>
+    <div class="nav-item" onclick="showPage('templates')" id="nav-templates">
+      <span class="nav-icon">◈</span><span class="nav-label">Templates</span>
+    </div>
+    <div class="nav-item" onclick="showPage('setup')" id="nav-setup">
+      <span class="nav-icon">⚙</span><span class="nav-label">Setup</span>
+    </div>
+  </div>
+</nav>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- ── COMPOSE ── -->
+  <div class="page active" id="page-compose">
+    <div class="ph">
+      <h1>Compose & Preview</h1>
+      <p>Select a role, generate personalized emails, and send with one click.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">Sender</div>
+      <div class="row2">
+        <div class="fg">
+          <label>Your Name</label>
+          <input type="text" id="sender-name" placeholder="e.g. Vaishnavi Bhalodi"/>
+        </div>
+        <div class="fg">
+          <label>Active User</label>
+          <input type="text" id="active-user-display" value="User 1" readonly style="opacity:0.5"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">Job Selection</div>
+
+      <div class="fg">
+        <label>Company</label>
+        <div class="sd">
+          <input type="text" id="company-search" placeholder="Search company..." autocomplete="off"
+            oninput="filterCompanies()" onfocus="openCompanyDD()"/>
+          <div class="dd-list" id="company-dd"></div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="fg">
+          <label>Job Role</label>
+          <select id="role-select" onchange="onRoleSelected()" disabled>
+            <option value="">— select company first —</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Job Link</label>
+          <input type="text" id="job-link" readonly style="opacity:0.5" placeholder="Auto-filled"/>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>Recruiter Emails</label>
+        <input type="text" id="mail-display" readonly style="opacity:0.5;font-family:var(--mono);font-size:11.5px" placeholder="Auto-filled"/>
+      </div>
+
+      <div class="fg">
+        <label>Attach Resume (PDF)</label>
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('resume-file').click()">
+          <span class="uz-icon">📎</span>
+          <div class="uz-text">Click to select PDF</div>
+          <div class="uz-file" id="uz-filename">No file selected</div>
+        </div>
+        <input type="file" id="resume-file" accept=".pdf" style="display:none" onchange="handleResumeSelect()"/>
+      </div>
+
+      <button class="btn btn-primary" id="preview-btn" onclick="generatePreviews()">
+        ✦ Generate Previews
+      </button>
+    </div>
+
+    <!-- Previews -->
+    <div id="preview-section" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:14px;font-weight:600">Email Previews</div>
+        <span id="tpl-tag" class="badge badge-purple" style="font-family:var(--mono)"></span>
+      </div>
+      <p style="font-size:11.5px;color:var(--muted);margin-bottom:14px">Each email is editable. Send individually or use Send All below.</p>
+      <div id="preview-cards" class="preview-cards"></div>
+      <div class="send-all-bar">
+        <button class="btn btn-green" id="send-all-btn" onclick="sendAll()">⚡ Send All</button>
+        <span id="send-all-status" style="font-size:11.5px;color:var(--muted)"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SHEET ── -->
+  <div class="page" id="page-sheet">
+    <div class="ph">
+      <h1>Sheet Data</h1>
+      <p>Live view of your Google Sheet rows.</p>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span class="card-hd" style="margin:0">Rows — <span id="sheet-user-label" style="color:var(--purple)">User 1</span></span>
+        <button class="btn btn-outline btn-sm" onclick="loadSheet()">↻ Refresh</button>
+      </div>
+      <div id="sheet-table"></div>
+    </div>
+  </div>
+
+  <!-- ── TEMPLATES ── -->
+  <div class="page" id="page-templates">
+    <div class="ph">
+      <h1>Email Templates</h1>
+      <p>Edit templates used for cold emails. Changes are saved to <code style="font-family:var(--mono);color:var(--purple)">templates.json</code>.</p>
+    </div>
+    <div class="tpl-layout">
+      <div class="tpl-list" id="tpl-list">
+        <div class="tpl-list-hd">
+          <span>Templates</span>
+          <button class="btn btn-outline btn-sm" onclick="openNewTemplateModal()">+ New</button>
+        </div>
+        <!-- populated by JS -->
+      </div>
+      <div class="tpl-editor" id="tpl-editor">
+        <div style="color:var(--muted);font-size:13px;margin:auto">← Select a template to edit</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SETUP ── -->
+  <div class="page" id="page-setup">
+    <div class="ph">
+      <h1>Setup</h1>
+      <p>Configuration status for your environment variables and files.</p>
+    </div>
+    <div class="card" style="max-width:480px">
+      <div class="card-hd">Config Status</div>
+      <div id="cfg-list"><div class="spin" style="margin:8px 0"></div></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- New Template Modal -->
+<div class="modal-overlay" id="new-tpl-modal">
+  <div class="modal">
+    <h3>New Template</h3>
+    <div class="fg">
+      <label>Template Key (no spaces, use_underscore)</label>
+      <input type="text" id="new-tpl-key" placeholder="e.g. devops_engineer"/>
+    </div>
+    <div class="fg">
+      <label>Display Name</label>
+      <input type="text" id="new-tpl-name" placeholder="e.g. DevOps Engineer"/>
+    </div>
+    <div class="fg">
+      <label>Group</label>
+      <input type="text" id="new-tpl-group" placeholder="e.g. Infrastructure"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeNewTemplateModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="createNewTemplate()">Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let sheetData   = {};
+let selCompany  = "";
+let selRole     = null;
+let activeUser  = "1";
+let resumeFile  = null;
+let templates   = {};
+let activeTplKey = null;
+
+// ── Init ───────────────────────────────────────────────────────────────────
+window.onload = async () => {
+  await loadSheet();
+  await loadTemplates();
+  checkConfig();
+};
+
+// ── User toggle ────────────────────────────────────────────────────────────
+function switchUser(u) {
+  activeUser = u;
+  document.getElementById('u1-btn').classList.toggle('active', u === '1');
+  document.getElementById('u2-btn').classList.toggle('active', u === '2');
+  document.getElementById('active-user-display').value = `User ${u}`;
+  document.getElementById('sheet-user-label').textContent = `User ${u}`;
+  // reload sheet with correct mail/flag columns
+  loadSheet();
+  // clear compose state
+  resetCompose();
+  toast(`Switched to User ${u}`, 'success');
+}
+
+function resetCompose() {
+  selCompany = ""; selRole = null;
+  document.getElementById('company-search').value = '';
+  document.getElementById('role-select').innerHTML = '<option>— select company first —</option>';
+  document.getElementById('role-select').disabled = true;
+  document.getElementById('job-link').value = '';
+  document.getElementById('mail-display').value = '';
+  document.getElementById('preview-section').style.display = 'none';
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function showPage(pg) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + pg).classList.add('active');
+  document.getElementById('nav-' + pg).classList.add('active');
+  if (pg === 'templates') renderTemplateList();
+}
+
+// ── Sheet ──────────────────────────────────────────────────────────────────
+async function loadSheet() {
+  try {
+    const res  = await fetch(`/api/load-sheet?user=${activeUser}`);
+    const data = await res.json();
+    if (!data.ok) { toast('Sheet error: ' + data.error, 'error'); return; }
+    sheetData = data.companies;
+    renderSheetTable();
+  } catch(e) { toast('Could not load sheet', 'error'); }
+}
+
+function renderSheetTable() {
+  const el = document.getElementById('sheet-table');
+  let rows = [];
+  for (const [co, rls] of Object.entries(sheetData))
+    rls.forEach(r => rows.push({ company: co, ...r }));
+
+  if (!rows.length) { el.innerHTML = '<p style="color:var(--muted);padding:8px 0">No rows found.</p>'; return; }
+
+  let html = `<table class="tbl"><thead><tr>
+    <th>Company</th><th>Job Role</th><th>Emails (User ${activeUser})</th><th>Status</th>
+  </tr></thead><tbody>`;
+  rows.forEach(r => {
+    const emails = r.mail_entries.map(e => e.name ? `${e.email} (${e.name})` : e.email).join(', ');
+    html += `<tr class="${r.flagged ? 'flagged' : ''}">
+      <td>${r.company}</td><td>${r.job_role}</td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--muted)">${emails || '—'}</td>
+      <td>${r.flagged
+        ? '<span class="badge badge-green">SENT</span>'
+        : '<span class="badge badge-yellow">Pending</span>'}</td>
+    </tr>`;
+  });
+  el.innerHTML = html + '</tbody></table>';
+}
+
+// ── Company search dropdown ────────────────────────────────────────────────
+function openCompanyDD() { filterCompanies(); }
+
+// Store filtered list so index-based click avoids all escaping issues
+let _ddCompanies = [];
+
+function filterCompanies() {
+  const q  = document.getElementById('company-search').value.toLowerCase();
+  const dd = document.getElementById('company-dd');
+  _ddCompanies = Object.keys(sheetData).filter(c => c.toLowerCase().includes(q));
+  if (!_ddCompanies.length) { dd.classList.remove('open'); return; }
+  dd.innerHTML = _ddCompanies.map((c, i) => {
+    const open = sheetData[c].filter(r => !r.flagged).length;
+    return '<div class="dd-item" data-idx="' + i + '"><span>' + c + '</span><span class="dd-count">' + open + ' open</span></div>';
+  }).join('');
+  dd.querySelectorAll('.dd-item').forEach(el => {
+    el.addEventListener('click', () => selectCompany(_ddCompanies[parseInt(el.dataset.idx)]));
+  });
+  dd.classList.add('open');
+}
+
+function selectCompany(name) {
+  selCompany = name;
+  document.getElementById('company-search').value = name;
+  document.getElementById('company-dd').classList.remove('open');
+  populateRoles(name);
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.sd')) document.getElementById('company-dd').classList.remove('open');
+});
+
+// ── Role dropdown ──────────────────────────────────────────────────────────
+function populateRoles(company) {
+  const sel      = document.getElementById('role-select');
+  const roles    = sheetData[company] || [];
+  const unflagged = roles.filter(r => !r.flagged);
+  sel.innerHTML  = '<option value="">— select a role —</option>';
+  unflagged.forEach((r, i) => {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = r.job_role;
+    sel.appendChild(o);
+  });
+  sel.disabled   = !unflagged.length;
+  if (!unflagged.length) sel.innerHTML = '<option>No open roles</option>';
+  sel._roles = unflagged;
+  document.getElementById('job-link').value = '';
+  document.getElementById('mail-display').value = '';
+  document.getElementById('preview-section').style.display = 'none';
+}
+
+function onRoleSelected() {
+  const sel = document.getElementById('role-select');
+  const idx = sel.value;
+  if (idx === '' || !sel._roles) return;
+  selRole = sel._roles[parseInt(idx)];
+  document.getElementById('job-link').value = selRole.job_link || '';
+  const disp = selRole.mail_entries.map(e => e.name ? `${e.email} — ${e.name}` : e.email).join(', ');
+  document.getElementById('mail-display').value = disp;
+  document.getElementById('preview-section').style.display = 'none';
+}
+
+// ── Resume upload ──────────────────────────────────────────────────────────
+function handleResumeSelect() {
+  const f = document.getElementById('resume-file').files[0];
+  if (!f) return;
+  resumeFile = f;
+  document.getElementById('uz-filename').textContent = '📄 ' + f.name;
+  document.getElementById('upload-zone').classList.add('has-file');
+}
+
+async function uploadResume() {
+  if (!resumeFile) return null;
+  const fd = new FormData();
+  fd.append('resume', resumeFile);
+  try {
+    const r = await fetch('/api/upload-resume', { method: 'POST', body: fd });
+    const d = await r.json();
+    return d.ok ? d.path : null;
+  } catch(e) { return null; }
+}
+
+// ── Generate previews ──────────────────────────────────────────────────────
+async function generatePreviews() {
+  if (!selCompany || !selRole) { toast('Select a company and role first', 'error'); return; }
+  const senderName = document.getElementById('sender-name').value.trim();
+  if (!senderName) { toast('Enter your name first', 'error'); return; }
+  const btn = document.getElementById('preview-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Generating…';
+  try {
+    const res = await fetch('/api/preview-emails', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        company: selCompany, job_role: selRole.job_role,
+        job_link: selRole.job_link, mail_entries: selRole.mail_entries,
+        sender_name: senderName
+      })
+    });
+    const data = await res.json();
+    if (!data.ok) { toast('Preview error', 'error'); return; }
+    renderPreviews(data);
+    document.getElementById('preview-section').style.display = 'block';
+    document.getElementById('preview-section').scrollIntoView({behavior:'smooth',block:'start'});
+  } catch(e) { toast('Failed to generate previews', 'error'); }
+  finally { btn.disabled = false; btn.innerHTML = '✦ Generate Previews'; }
+}
+
+function renderPreviews(data) {
+  document.getElementById('tpl-tag').textContent = data.template_name;
+  const cont = document.getElementById('preview-cards');
+  cont.innerHTML = '';
+  data.previews.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'pcard';
+    card.id = `pc-${i}`;
+    card.innerHTML = `
+      <div class="pcard-head">
+        <span class="pcard-email">→ ${p.email}</span>
+        <div class="pcard-badges">
+          ${p.recruiter_name !== 'there'
+            ? `<span class="badge badge-blue">👤 ${p.recruiter_name}</span>`
+            : `<span class="badge badge-yellow">No name</span>`}
+          <span class="sent-indicator">✓ Sent</span>
+        </div>
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-meta"><strong>To:</strong> ${p.email} &nbsp;·&nbsp; <strong>Subject:</strong> ${esc(p.subject)}</div>
+        <div class="fg">
+          <label>Subject</label>
+          <input type="text" id="subj-${i}" value="${esc(p.subject)}"/>
+        </div>
+        <div class="fg">
+          <label>Body</label>
+          <textarea id="body-${i}" rows="10">${esc(p.body)}</textarea>
+        </div>
+        <div class="pcard-actions">
+          <button class="btn btn-green btn-sm send-btn" onclick="sendSingle(${i},'${p.email.replace(/'/g,"\\'")}')">↗ Send</button>
+          <span id="st-${i}" style="font-size:11.5px;color:var(--muted)"></span>
+        </div>
+      </div>`;
+    cont.appendChild(card);
+  });
+  cont._previews = data.previews;
+}
+
+// ── Send single ────────────────────────────────────────────────────────────
+async function sendSingle(i, email) {
+  const st = document.getElementById(`st-${i}`);
+  st.textContent = 'Uploading…';
+  const rp = await uploadResume();
+  st.textContent = 'Sending…';
+  const senderName = document.getElementById('sender-name').value.trim();
+  try {
+    const res = await fetch('/api/send-emails', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        company: selCompany, job_role: selRole.job_role,
+        emails: [{ email, subject: document.getElementById(`subj-${i}`).value, body: document.getElementById(`body-${i}`).value }],
+        sender_name: senderName, resume_path: rp || '', user_num: activeUser
+      })
+    });
+    const data = await res.json();
+    const r = data.results?.[0];
+    if (r?.ok) {
+      document.getElementById(`pc-${i}`).classList.add('sent');
+      st.textContent = '';
+      toast(`Sent to ${email}`, 'success');
+      checkAllSent();
+    } else {
+      st.textContent = '✗ ' + (r?.message || 'Failed');
+      toast('Failed: ' + (r?.message || 'error'), 'error');
+    }
+  } catch(e) { st.textContent = '✗ Error'; toast('Send error','error'); }
+}
+
+// ── Send all ───────────────────────────────────────────────────────────────
+async function sendAll() {
+  const cont = document.getElementById('preview-cards');
+  const previews = cont._previews;
+  if (!previews) return;
+  const btn = document.getElementById('send-all-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Sending all…';
+  const senderName = document.getElementById('sender-name').value.trim();
+  const rp = await uploadResume();
+  const emails = previews.map((p, i) => ({
+    email: p.email,
+    subject: document.getElementById(`subj-${i}`).value,
+    body: document.getElementById(`body-${i}`).value
+  }));
+  try {
+    const res = await fetch('/api/send-emails', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        company: selCompany, job_role: selRole.job_role,
+        emails, sender_name: senderName, resume_path: rp || '', user_num: activeUser
+      })
+    });
+    const data = await res.json();
+    let allOk = true;
+    data.results.forEach((r, i) => {
+      if (r.ok) document.getElementById(`pc-${i}`).classList.add('sent');
+      else { allOk = false; document.getElementById(`st-${i}`).textContent = '✗ ' + r.message; }
+    });
+    if (allOk) {
+      document.getElementById('send-all-status').textContent = '✓ All sent & flagged';
+      toast('All sent! Row flagged ✓', 'success');
+      await loadSheet();
+    } else {
+      toast('Some failed — check individual cards', 'error');
+    }
+  } catch(e) { toast('Send all failed','error'); }
+  finally { btn.disabled = false; btn.innerHTML = '⚡ Send All'; }
+}
+
+function checkAllSent() {
+  const cards = document.querySelectorAll('.pcard');
+  if ([...cards].every(c => c.classList.contains('sent'))) {
+    document.getElementById('send-all-status').textContent = '✓ All sent & flagged';
+    toast('All sent! Row flagged ✓', 'success');
+    loadSheet();
+  }
+}
+
+// ── Templates ──────────────────────────────────────────────────────────────
+async function loadTemplates() {
+  try {
+    const res = await fetch('/api/templates');
+    const data = await res.json();
+    if (data.ok) { templates = data.templates; renderTemplateList(); }
+  } catch(e) {}
+}
+
+function renderTemplateList() {
+  const el = document.getElementById('tpl-list');
+  // Group templates
+  const groups = {};
+  Object.entries(templates).forEach(([k, v]) => {
+    const g = v.group || 'Other';
+    if (!groups[g]) groups[g] = [];
+    groups[g].push({ key: k, ...v });
+  });
+  let html = `<div class="tpl-list-hd"><span>Templates</span><button class="btn btn-outline btn-sm" onclick="openNewTemplateModal()">+ New</button></div>`;
+  Object.entries(groups).forEach(([g, items]) => {
+    html += `<div class="tpl-group-label">${g}</div>`;
+    items.forEach(t => {
+      html += `<div class="tpl-item ${activeTplKey === t.key ? 'active' : ''}" onclick="selectTemplate('${t.key}')">${t.display_name}</div>`;
+    });
+  });
+  el.innerHTML = html;
+}
+
+function selectTemplate(key) {
+  activeTplKey = key;
+  const t = templates[key];
+  if (!t) return;
+  renderTemplateList(); // re-render to show active
+  const ed = document.getElementById('tpl-editor');
+  ed.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:15px;font-weight:600">${t.display_name}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Group: ${t.group}</div>
+      </div>
+      ${key !== 'general' ? `<button class="btn btn-danger btn-sm" onclick="deleteTemplate('${key}')">Delete</button>` : ''}
+    </div>
+    <div class="divider" style="margin:12px 0"></div>
+    <div class="tpl-placeholders">
+      Available placeholders:
+      <span>{recruiter_name}</span><span>{company_name}</span><span>{job_role}</span><span>{sender_name}</span>
+    </div>
+    <div class="fg">
+      <label>Display Name</label>
+      <input type="text" id="tpl-edit-name" value="${esc(t.display_name)}"/>
+    </div>
+    <div class="fg">
+      <label>Group</label>
+      <input type="text" id="tpl-edit-group" value="${esc(t.group)}"/>
+    </div>
+    <div class="fg" style="flex:1;display:flex;flex-direction:column">
+      <label>Email Body</label>
+      <textarea id="tpl-edit-body" style="flex:1;min-height:260px">${esc(t.body)}</textarea>
+    </div>
+    <div class="tpl-editor-actions">
+      <button class="btn btn-primary" onclick="saveTemplate('${key}')">💾 Save</button>
+      <span id="tpl-save-status" style="font-size:11.5px;color:var(--muted)"></span>
+    </div>`;
+}
+
+async function saveTemplate(key) {
+  templates[key] = {
+    display_name: document.getElementById('tpl-edit-name').value.trim(),
+    group:        document.getElementById('tpl-edit-group').value.trim(),
+    body:         document.getElementById('tpl-edit-body').value
+  };
+  try {
+    const res = await fetch('/api/templates', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ templates })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById('tpl-save-status').textContent = '✓ Saved';
+      setTimeout(() => { const el = document.getElementById('tpl-save-status'); if(el) el.textContent = ''; }, 2000);
+      renderTemplateList();
+      toast('Template saved', 'success');
+    } else { toast('Save failed: ' + data.error, 'error'); }
+  } catch(e) { toast('Save error', 'error'); }
+}
+
+async function deleteTemplate(key) {
+  if (!confirm(`Delete template "${templates[key]?.display_name}"?`)) return;
+  try {
+    const res = await fetch(`/api/templates/${key}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.ok) {
+      delete templates[key];
+      activeTplKey = null;
+      renderTemplateList();
+      document.getElementById('tpl-editor').innerHTML = '<div style="color:var(--muted);font-size:13px;margin:auto">← Select a template to edit</div>';
+      toast('Template deleted', 'success');
+    } else { toast('Delete failed: ' + data.error, 'error'); }
+  } catch(e) { toast('Delete error', 'error'); }
+}
+
+function openNewTemplateModal() {
+  document.getElementById('new-tpl-modal').classList.add('open');
+}
+function closeNewTemplateModal() {
+  document.getElementById('new-tpl-modal').classList.remove('open');
+}
+function createNewTemplate() {
+  const key   = document.getElementById('new-tpl-key').value.trim().replace(/\s+/g,'_').toLowerCase();
+  const name  = document.getElementById('new-tpl-name').value.trim();
+  const group = document.getElementById('new-tpl-group').value.trim() || 'Other';
+  if (!key || !name) { toast('Key and name required', 'error'); return; }
+  if (templates[key]) { toast('Key already exists', 'error'); return; }
+  templates[key] = {
+    display_name: name,
+    group,
+    body: "Hi {recruiter_name},\n\nI came across the {job_role} role at {company_name} and wanted to reach out.\n\nI've attached my resume and would love to connect.\n\nBest regards,\n{sender_name}"
+  };
+  closeNewTemplateModal();
+  renderTemplateList();
+  selectTemplate(key);
+  toast('Template created — edit and save it', 'success');
+}
+
+// ── Config ─────────────────────────────────────────────────────────────────
+async function checkConfig() {
+  try {
+    const res = await fetch('/api/config-status');
+    const data = await res.json();
+    const checks = [
+      ['GROQ_API_KEY', !data.issues.some(i => i.includes('GROQ'))],
+      ['GMAIL_ADDRESS', !!data.gmail],
+      ['GMAIL_APP_PASSWORD', !data.issues.some(i => i.includes('GMAIL_APP'))],
+      ['GOOGLE_SHEET_ID', !data.issues.some(i => i.includes('GOOGLE_SHEET'))],
+      ['service_account.json', !data.issues.some(i => i.includes('service_account'))],
+      ['templates.json', true],
+    ];
+    document.getElementById('cfg-list').innerHTML = checks.map(([n, ok]) =>
+      `<div class="cfg-item">
+        <div class="cfg-dot ${ok?'ok':'err'}"></div>
+        <span>${n}</span>
+        ${!ok?'<span style="margin-left:auto;font-size:11px;color:var(--red)">missing</span>':''}
+      </div>`
+    ).join('');
+  } catch(e) {}
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${type==='success'?'✓':'✗'}</span> ${msg}`;
+  document.getElementById('toast-wrap').appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+</script>
+</body>
+</html>

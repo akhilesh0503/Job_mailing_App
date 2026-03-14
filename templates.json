@@ -1,0 +1,52 @@
+{
+  "ai_ml_engineer": {
+    "display_name": "AI / ML Engineer",
+    "group": "AI & ML",
+    "body": "Hi {recruiter_name},\n\nI recently applied for the {job_role} role at {company_name} and wanted to reach out to express my interest.\n\nMy background focuses on building machine learning systems and deploying them in real world environments. I have worked on LLM pipelines, computer vision models, and scalable ML services that combine data, infrastructure, and model deployment.\n\nI enjoy taking models from experimentation to production and building reliable systems around them.\n\nI would love the opportunity to connect and learn more about the role.\n\nLinkedIn - https://www.linkedin.com/in/vaishnavi-bhalodi-328246209/\n\nBest regards,\n{sender_name}\n"
+  },
+  "backend_engineer": {
+    "display_name": "Backend Engineer",
+    "group": "Core Software",
+    "body": "Hi {recruiter_name},\n\nI recently applied for the {job_role} role at {company_name} and wanted to follow up to share my interest.\n\nMy experience focuses on building backend systems, APIs, and distributed services using Python, Java, Node.js, and cloud infrastructure. I have built microservices, asynchronous APIs, and scalable backend systems that support data and machine learning workloads.\n\nI enjoy designing reliable systems and solving complex engineering problems.\n\nI would really appreciate the chance to connect.\n\nLinkedIn - https://www.linkedin.com/in/vaishnavi-bhalodi-328246209/\n\nBest regards,\n{sender_name}\n"
+  },
+  "data_analyst": {
+    "display_name": "Data Analyst",
+    "group": "Data",
+    "body": "Hi {recruiter_name},\n\nI recently applied for the {job_role} role at {company_name} and wanted to reach out to express my interest.\n\nMy experience includes working with large datasets, performing statistical analysis, and building dashboards that translate data into actionable insights. I have worked with SQL, Python, and visualization tools to analyze trends and support product decisions.\n\nI enjoy using data to uncover insights that help teams make better decisions.\n\nI would love the opportunity to connect.\n\nLinkedIn - https://www.linkedin.com/in/vaishnavi-bhalodi-328246209/\n\nBest regards,\n{sender_name}\n"
+  },
+  "data_engineer": {
+    "display_name": "Data Engineer",
+    "group": "Data",
+    "body": "Hi {recruiter_name},\n\nI recently applied for the {job_role} role at {company_name} and wanted to follow up to express my interest.\n\nMy background focuses on building scalable data pipelines and data infrastructure using tools such as Spark, Kafka, Airflow, and cloud platforms. I enjoy designing reliable data systems that support analytics and machine learning workloads.\n\nI would love the opportunity to connect and learn more about the role.\n\nLinkedIn - https://www.linkedin.com/in/vaishnavi-bhalodi-328246209/\n\nBest regards,\n{sender_name}\n"
+  },
+  "data_scientist": {
+    "display_name": "Data Scientist",
+    "group": "Data",
+    "body": "Hi {recruiter_name},\n\nI recently applied for the {job_role} role at {company_name} and wanted to reach out to express my interest.\n\nMy experience focuses on applying machine learning and statistical modeling to real world problems. I have worked on forecasting, anomaly detection, NLP, and computer vision projects while building systems that translate models into practical applications.\n\nI enjoy turning complex data into predictive systems that create real impact.\n\nI would love the opportunity to connect.\n\nLinkedIn - https://www.linkedin.com/in/vaishnavi-bhalodi-328246209/\n\nBest regards,\n{sender_name}\n"
+  },
+  "fullstack_engineer": {
+    "display_name": "Full Stack Engineer",
+    "group": "Core Software",
+    "body": "Hi {recruiter_name},\n\nI recently applied for the {job_role} role at {company_name} and wanted to reach out to express my interest.\n\nMy experience spans both backend systems and product development. I have built applications using React, Node.js, and cloud infrastructure while designing APIs, databases, and scalable services behind the product.\n\nI enjoy building complete systems that connect infrastructure, data, and user experience.\n\nI would love the opportunity to connect.\n\nLinkedIn - https://www.linkedin.com/in/vaishnavi-bhalodi-328246209/\n\nBest regards,\n{sender_name}\n"
+  },
+  "general": {
+    "display_name": "General",
+    "group": "Other",
+    "body": "Hi {recruiter_name},\n\nI came across the {job_role} role at {company_name} and wanted to reach out directly.\n\nI'm very interested in contributing to your team and believe my background would be a strong fit. I've attached my resume for your consideration.\n\nI'd love to connect.\n\nLinkedIn - https://www.linkedin.com/in/vaishnavi-bhalodi-328246209/\n\nBest regards,\n{sender_name}"
+  },
+  "infrastructure_engineer": {
+    "display_name": "Infrastructure / Cloud Engineer",
+    "group": "Infrastructure",
+    "body": "Hi {recruiter_name},\n\nI recently applied for the {job_role} role at {company_name} and wanted to follow up to express my interest.\n\nMy experience includes building distributed systems and cloud infrastructure using AWS, Docker, and scalable compute pipelines. I enjoy designing infrastructure that enables teams to deploy and scale systems reliably.\n\nI would appreciate the opportunity to connect and learn more about the role.\n\nLinkedIn - https://www.linkedin.com/in/vaishnavi-bhalodi-328246209/\n\nBest regards,\n{sender_name}\n"
+  },
+  "software_engineer": {
+    "display_name": "Software Engineer",
+    "group": "Core Software",
+    "body": "Hi {recruiter_name},\n\nI recently applied for the {job_role} role at {company_name} and wanted to follow up to express my interest.\n\nMy background focuses on building scalable software systems including distributed services, backend infrastructure, and machine learning powered applications. I enjoy solving challenging engineering problems and building systems that are reliable and efficient.\n\nI would really appreciate the opportunity to connect and learn more about the role.\n\nLinkedIn - https://www.linkedin.com/in/vaishnavi-bhalodi-328246209/\n\nBest regards,\n{sender_name}\n"
+  },
+  "startup_engineer": {
+    "display_name": "Startup / Founding Engineer",
+    "group": "Startup",
+    "body": "Hi {recruiter_name},\n\nI recently applied for the {job_role} role at {company_name} and wanted to reach out because this is exactly the type of opportunity I am looking for.\n\nI am very comfortable working in startup environments. I understand that building a generational company requires ownership, resilience, and long hours, and that is the type of environment where I do my best work. I enjoy taking responsibility, moving quickly, and solving difficult problems across systems and products.\n\nI am actively looking for opportunities where I can contribute wherever the company needs most. I learn quickly, adapt fast, and care deeply about helping the company succeed.\n\nRegarding sponsorship, while I may require it in the future, I am open to contract based work or arrangements without sponsorship for the next three years.\n\nI am not just looking for a job. I am looking to help build something meaningful.\n\nLinkedIn - https://www.linkedin.com/in/vaishnavi-bhalodi-328246209/\n\nBest regards,\n{sender_name}\n"
+  }
+}
